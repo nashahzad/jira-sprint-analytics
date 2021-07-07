@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "metrics"
+version = "0.1.0"
+description = ""
+authors = ["Nauman Shahzad <nauman.a.shahzad@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7.1"
+pandas = "^1.2.4"
+jira = "^3.0.1"
+python-dotenv = "^0.17.1"
+plotly = "^4.14.3"
+pydantic = "^1.8.2"
+black = "^21.6b0"
+argparse = "^1.4.0"
+PyYAML = "^5.4.1"
+flake8 = "^3.9.2"
+
+[tool.black]
+line-length = 88
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+)/
+'''
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
