@@ -19,3 +19,6 @@ format:
 
 lint: format
 	flake8
+
+dependency-tree:
+	poetry show --tree

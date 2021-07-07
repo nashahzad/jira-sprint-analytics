@@ -135,3 +135,9 @@ optional arguments:
 * `make lint` - Runs black and flake8 on the project
 all the python files in this project, these are the same checks ran on pull requests
   with Github actions
+  
+* `make dependency-tree` - Outputs a all the dependencies for this project
+
+### Credits
+
+Credits to all the packages outputted by `make dependency-tree`.
