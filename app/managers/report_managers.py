@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from app.constants import REPORT_COLUMNS
 from app.models import SprintMetrics
@@ -30,42 +30,46 @@ class ReportManager:
         )
         figure.show()
 
-    def create_or_update_report(self, sprint_metrics: SprintMetrics) -> None:
-        self._remove_existing_current_sprint_entry(sprint_metrics.sprint_name)
-        four_sprint_average = self._get_four_sprint_completed_average(
-            sprint_metrics.completed
-        )
-        four_sprint_capacity_achieved_avg = (
-            self._get_four_sprint_capacity_achieved_average(
-                sprint_metrics.capacity_achieved
-            )
-        )
-        four_sprint_smoothed_capacity_avg = (
-            self._get_four_sprint_smoothed_capacity_achieved_average(
-                sprint_metrics.completed, sprint_metrics.planned_capacity
-            )
-        )
-        row = {
-            "Sprint": sprint_metrics.sprint_name,
-            "Commitment": sprint_metrics.commitment,
-            "Completed": sprint_metrics.completed,
-            "4-Sprint Average": four_sprint_average,
-            "Scope Change": sprint_metrics.scope_change,
-            "Planned Capacity": sprint_metrics.planned_capacity,
-            "Capacity Achieved": self._format_float_as_percent(
-                sprint_metrics.capacity_achieved
-            ),
-            "4-Sprint Capacity Achieved": four_sprint_capacity_achieved_avg,
-            "4-Sprint Smoothed Average": four_sprint_smoothed_capacity_avg,
-            "Unpointed Issues": sprint_metrics.unpointed_breakdown.unpointed_sum,
-            "Unpointed Stories": sprint_metrics.unpointed_breakdown.unpointed_stories,
-            "Unpointed Tasks": sprint_metrics.unpointed_breakdown.unpointed_tasks,
-            "Bug Tickets": sprint_metrics.unpointed_breakdown.unpointed_bugs,
-            "Priority Points": sprint_metrics.priority_breakdown.priority_points,
-            "Non-Priority Points": sprint_metrics.priority_breakdown.non_priority_points,
-        }
+    def create_or_update_report(self, sprint_metrics: List[SprintMetrics]) -> None:
+        sprint_names = [metrics.sprint_name for metrics in sprint_metrics]
+        for sprint_name in sprint_names:
+            self._remove_existing_current_sprint_entry(sprint_name)
 
-        self.df = self.df.append(row, ignore_index=True)
+        for sprint_metric in sprint_metrics:
+            four_sprint_average = self._get_four_sprint_completed_average(
+                sprint_metric.completed
+            )
+            four_sprint_capacity_achieved_avg = (
+                self._get_four_sprint_capacity_achieved_average(
+                    sprint_metric.capacity_achieved
+                )
+            )
+            four_sprint_smoothed_capacity_avg = (
+                self._get_four_sprint_smoothed_capacity_achieved_average(
+                    sprint_metric.completed, sprint_metric.planned_capacity
+                )
+            )
+            row = {
+                "Sprint": sprint_metric.sprint_name,
+                "Commitment": sprint_metric.commitment,
+                "Completed": sprint_metric.completed,
+                "4-Sprint Average": four_sprint_average,
+                "Scope Change": sprint_metric.scope_change,
+                "Planned Capacity": sprint_metric.planned_capacity,
+                "Capacity Achieved": self._format_float_as_percent(
+                    sprint_metric.capacity_achieved
+                ),
+                "4-Sprint Capacity Achieved": four_sprint_capacity_achieved_avg,
+                "4-Sprint Smoothed Average": four_sprint_smoothed_capacity_avg,
+                "Unpointed Issues": sprint_metric.unpointed_breakdown.unpointed_sum,
+                "Unpointed Stories": sprint_metric.unpointed_breakdown.unpointed_stories,
+                "Unpointed Tasks": sprint_metric.unpointed_breakdown.unpointed_tasks,
+                "Bug Tickets": sprint_metric.unpointed_breakdown.unpointed_bugs,
+                "Priority Points": sprint_metric.priority_breakdown.priority_points,
+                "Non-Priority Points": sprint_metric.priority_breakdown.non_priority_points,
+            }
+
+            self.df = self.df.append(row, ignore_index=True)
         self.df.to_csv(
             f"reports/{self.project_name}_sprint_metrics.csv",
             index=False,

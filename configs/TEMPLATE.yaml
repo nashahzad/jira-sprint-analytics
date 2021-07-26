@@ -1,6 +1,8 @@
 board_id:
 complete_status:
-planned_capacity:
+planned_capacities:
+  -
 priority_epics:
   -
 project_name:
+#past_n_sprints:

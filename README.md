@@ -2,7 +2,7 @@
 
 This is a command line tool that will
 fetch various metrics pertaining to a  Jira project's
-current sprint. These metrics will be appended into a 
+current sprint or for the past N sprints. These metrics will be appended into a 
 csv file that can be exported into 
 any other external tools for further analysis 
 or visualizations.
@@ -53,8 +53,10 @@ optional arguments:
                         Optional config file containing the configuration by
                         which to generate a report with, if provided then the
                         other args not required.
-  --planned-capacity PLANNED_CAPACITY
-                        The team's planned capacity for the current sprint
+  --planned-capacities [PLANNED_CAPACITIES [PLANNED_CAPACITIES ...]]
+                        The team's planned capacities for previous sprints. In
+                        order of oldest to most current sprint's planned
+                        capacities.
   --board-id BOARD_ID   JIRA Board ID
   --project-name PROJECT_NAME
                         JIRA Project Name
@@ -64,6 +66,10 @@ optional arguments:
                         JIRA Issue status to indicate an Issue is done
   --priority-epics [PRIORITY_EPICS [PRIORITY_EPICS ...]]
                         Optional list of keys of the priority epics
+  --past-n-sprints [PAST_N_SPRINTS [PAST_N_SPRINTS ...]]
+                        Optionally grab metrics for the past N sprints, if left
+                        out then only the currently active sprint's metrics
+                        will be fetched
 ```
 
 A config file can be supplied in the form of the `--config-file` arg to the
@@ -82,11 +88,12 @@ To generate the report one needs to run `jira_scraper.py` script:
 ```bash
 ➜ python jira_scraper.py --help
 usage: jira_scraper.py [-h] [--config-file CONFIG_FILENAME]
-                       [--planned-capacity PLANNED_CAPACITY]
+                       [--planned-capacities [PLANNED_CAPACITIES [PLANNED_CAPACITIES ...]]]
                        [--board-id BOARD_ID] [--project-name PROJECT_NAME]
                        [--story-points-field STORY_POINTS_FIELD]
                        [--complete-status COMPLETE_STATUS]
                        [--priority-epics [PRIORITY_EPICS [PRIORITY_EPICS ...]]]
+                       [--past-n-sprints [PAST_N_SPRINTS [PAST_N_SPRINTS ...]]]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -94,8 +101,10 @@ optional arguments:
                         Optional config file containing the configuration by
                         which to generate a report with, if provided then the
                         other args not required.
-  --planned-capacity PLANNED_CAPACITY
-                        The team's planned capacity for the current sprint
+  --planned-capacities [PLANNED_CAPACITIES [PLANNED_CAPACITIES ...]]
+                        The team's planned capacities for previous sprints. In
+                        order of oldest to most current sprint's planned
+                        capacities.
   --board-id BOARD_ID   JIRA Board ID
   --project-name PROJECT_NAME
                         JIRA Project Name
@@ -105,6 +114,10 @@ optional arguments:
                         JIRA Issue status to indicate an Issue is done
   --priority-epics [PRIORITY_EPICS [PRIORITY_EPICS ...]]
                         Optional list of keys of the priority epics
+  --past-n-sprints [PAST_N_SPRINTS [PAST_N_SPRINTS ...]]
+                        Optionally grab metrics for the past N sprints,if left
+                        out then only the currently active sprint's metrics
+                        will be fetched
 ```
 
 To generate data visualizations based upon the report created by the scraper then

@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List, Optional
 
+from jira import Issue
 from pydantic import BaseModel, validator
 
 from app.constants import DEFAULT_STORY_POINTS_FIELD_NAME
@@ -13,12 +14,13 @@ class EnvConfig(BaseModel):
 
 
 class ReportCommandLineArgs(BaseModel):
-    planned_capacity: float
+    planned_capacities: List[float]
     board_id: int
     project_name: str
     story_points_field: str = DEFAULT_STORY_POINTS_FIELD_NAME
     complete_status: str
     priority_epics: Optional[List[str]] = []
+    past_n_sprints: Optional[int]
 
     @validator("priority_epics")
     def set_priority_epics(cls, priority_epics):
@@ -36,12 +38,21 @@ class ManagerConfig(BaseModel):
     email: str
     server_url: str
 
-    planned_capacity: float
+    planned_capacities: List[float]
     board_id: int
     project_name: str
     story_points_field: str
     complete_status: str
     priority_epics: List[str]
+    past_n_sprints: Optional[int]
+
+
+class SprintIssues(BaseModel):
+    sprint_id: str
+    issues: List[Issue]
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class JiraTicket(BaseModel):

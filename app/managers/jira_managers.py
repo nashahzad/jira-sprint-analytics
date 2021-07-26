@@ -13,6 +13,7 @@ from app.models import (
     UnpointedBreakdown,
     PriorityPointsBreakdown,
     JiraTicket,
+    SprintIssues,
 )
 from app.utils import get_manager_config
 
@@ -31,30 +32,33 @@ class JIRAManager:
         self.jira = jira
         self.config = config
 
-    def get_sprint_metrics(self) -> SprintMetrics:
-        current_issues = self._get_current_sprint_issues(self.config.project_name)
-        tickets = self._parse_issues(current_issues)
-        current_sprint_info = self._get_current_active_sprint_info()
-        start_date = self._get_sprint_start_date(current_sprint_info)
-        end_date = self._get_sprint_end_date(current_sprint_info)
+    def get_sprint_metrics(self) -> List[SprintMetrics]:
+        sprints = self._get_sprint_issues()
+        metrics = []
+        for index, sprint_issues in enumerate(sprints):
+            tickets = self._parse_issues(sprint_issues.issues)
+            sprint_info = self._get_sprint_info(sprint_issues.sprint_id)
+            start_date = self._get_sprint_start_date(sprint_info)
+            end_date = self._get_sprint_end_date(sprint_info)
 
-        commitment = self._get_initial_sprint_commitment(tickets, start_date)
-        completed = self._get_completed_story_points(tickets)
-        scope_change = self._get_scope_change(tickets, start_date)
-        unpointed_breakdown = self._get_unpointed_breakdown(tickets)
-        priority_breakdown = self._priority_points_breakdown(tickets)
+            commitment = self._get_initial_sprint_commitment(tickets, start_date)
+            completed = self._get_completed_story_points(tickets)
+            scope_change = self._get_scope_change(tickets, start_date)
+            unpointed_breakdown = self._get_unpointed_breakdown(tickets)
+            priority_breakdown = self._priority_points_breakdown(tickets)
 
-        sprint_metrics = SprintMetrics(
-            planned_capacity=self.config.planned_capacity,
-            commitment=commitment,
-            completed=completed,
-            scope_change=scope_change,
-            start_date=start_date,
-            end_date=end_date,
-            unpointed_breakdown=unpointed_breakdown,
-            priority_breakdown=priority_breakdown,
-        )
-        return sprint_metrics
+            sprint_metrics = SprintMetrics(
+                planned_capacity=self.config.planned_capacities[index],
+                commitment=commitment,
+                completed=completed,
+                scope_change=scope_change,
+                start_date=start_date,
+                end_date=end_date,
+                unpointed_breakdown=unpointed_breakdown,
+                priority_breakdown=priority_breakdown,
+            )
+            metrics.append(sprint_metrics)
+        return metrics
 
     def _parse_issues(self, issues: List[Issue]) -> List[JiraTicket]:
         tickets: List[JiraTicket] = []
@@ -144,14 +148,31 @@ class JIRAManager:
 
         return scope_change
 
-    def _get_current_sprint_issues(self, project_name) -> List[Issue]:
-        jql = f"project = {project_name} AND sprint in openSprints()"
-        issues = self.jira.search_issues(
-            jql_str=jql,
-            fields=f"{self.config.story_points_field},status,issuetype,parent",
-            expand="changelog",
-        )
-        return issues
+    def _get_sprint_issues(self) -> List[SprintIssues]:
+        sprints = self.jira.sprints(board_id=self.config.board_id)
+        sprints = reversed(sprints)
+
+        if self.config.past_n_sprints is not None:
+            states = [SprintStates.CLOSED.value, SprintStates.ACTIVE.value]
+            limit = self.config.past_n_sprints + 1
+        else:
+            states = [SprintStates.ACTIVE.value]
+            limit = 1
+
+        filtered_sprints = list(filter(lambda sprint: sprint.state in states, sprints))
+        filtered_sprints = filtered_sprints[:limit]
+
+        sprint_issues = []
+        for sprint in filtered_sprints:
+            jql = f"project = {self.config.project_name} AND sprint = {sprint.id}"
+            issues = self.jira.search_issues(
+                jql_str=jql,
+                fields=f"{self.config.story_points_field},status,issuetype,parent",
+                expand="changelog",
+            )
+            sprint_issue = SprintIssues(sprint_id=sprint.id, issues=issues)
+            sprint_issues.insert(0, sprint_issue)
+        return sprint_issues
 
     def _get_issue_story_points(self, issue: Issue) -> Optional[int]:
         issue_points = issue.raw["fields"][self.config.story_points_field]
@@ -176,15 +197,11 @@ class JIRAManager:
         utc_datetime = date.replace(tzinfo=pytz.UTC)
         return utc_datetime
 
-    def _get_current_active_sprint_info(self) -> Dict:
-        sprints = self.jira.sprints(board_id=self.config.board_id)
-        for sprint in reversed(sprints):
-            if sprint.state == SprintStates.ACTIVE.value:
-                sprint_info = self.jira.sprint_info(
-                    board_id=self.config.board_id, sprint_id=sprint.id
-                )
-                return sprint_info
-        raise ValueError("No active sprint was found")
+    def _get_sprint_info(self, sprint_id: str) -> Dict:
+        sprint_info = self.jira.sprint_info(
+            board_id=self.config.board_id, sprint_id=sprint_id
+        )
+        return sprint_info
 
     def _get_sprint_start_date(self, sprint_info: Dict) -> datetime:
         start_date = datetime.strptime(sprint_info["startDate"], "%d/%b/%y %I:%M %p")
