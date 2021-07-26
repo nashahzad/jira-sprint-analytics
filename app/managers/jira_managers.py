@@ -47,6 +47,12 @@ class JIRAManager:
             unpointed_breakdown = self._get_unpointed_breakdown(tickets)
             priority_breakdown = self._priority_points_breakdown(tickets)
 
+            planned_capacity = (
+                self.config.planned_capacities[index]
+                if index < len(self.config.planned_capacities)
+                else 0
+            )
+
             sprint_metrics = SprintMetrics(
                 planned_capacity=self.config.planned_capacities[index],
                 commitment=commitment,
