@@ -42,11 +42,14 @@ def _get_report_command_line_args() -> ReportCommandLineArgs:
         required=False,
     )
     parser.add_argument(
-        "--planned-capacity",
-        dest="planned_capacity",
+        "--planned-capacities",
+        dest="planned_capacities",
         type=float,
-        help="The team's planned capacity for the current sprint",
+        nargs="*",
+        help="The team's planned capacities for previous sprints. "
+        "In order of oldest to most current sprint's planned capacities.",
         required=False,
+        default=[],
     )
     parser.add_argument(
         "--board-id", dest="board_id", type=int, help="JIRA Board ID", required=False
@@ -81,6 +84,17 @@ def _get_report_command_line_args() -> ReportCommandLineArgs:
         help="Optional list of keys of the priority epics",
         required=False,
         default=[],
+    )
+    parser.add_argument(
+        "--past-n-sprints",
+        dest="past_n_sprints",
+        type=int,
+        nargs="*",
+        help="Optionally grab metrics for the past N sprints, "
+        "if left out then only the currently active sprint's metrics "
+        "will be fetched",
+        required=False,
+        default=None,
     )
     namespace = parser.parse_args()
     if namespace.config_filename is not None:

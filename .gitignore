@@ -143,3 +143,6 @@ reports/*.csv
 # Configs
 configs/*.yaml
 !configs/TEMPLATE.yaml
+
+# Jetbrains
+.idea/
