@@ -56,7 +56,7 @@ optional arguments:
   --planned-capacities [PLANNED_CAPACITIES [PLANNED_CAPACITIES ...]]
                         The team's planned capacities for previous sprints. In
                         order of most current to the oldest sprint's planned
-                        capacities.
+                        capacities. If not given will assumed to be 0.
   --board-id BOARD_ID   JIRA Board ID
   --project-name PROJECT_NAME
                         JIRA Project Name
