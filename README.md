@@ -56,7 +56,7 @@ optional arguments:
   --planned-capacities [PLANNED_CAPACITIES [PLANNED_CAPACITIES ...]]
                         The team's planned capacities for previous sprints. In
                         order of most current to the oldest sprint's planned
-                        capacities. If not given will assumed to be 0.
+                        capacities.
   --board-id BOARD_ID   JIRA Board ID
   --project-name PROJECT_NAME
                         JIRA Project Name
@@ -66,7 +66,7 @@ optional arguments:
                         JIRA Issue status to indicate an Issue is done
   --priority-epics [PRIORITY_EPICS [PRIORITY_EPICS ...]]
                         Optional list of keys of the priority epics
-  --past-n-sprints [PAST_N_SPRINTS [PAST_N_SPRINTS ...]]
+  --past-n-sprints PAST_N_SPRINTS
                         Optionally grab metrics for the past N sprints, if
                         left out then only the currently active sprint's
                         metrics will be fetched
@@ -93,7 +93,7 @@ usage: jira_scraper.py [-h] [--config-file CONFIG_FILENAME]
                        [--story-points-field STORY_POINTS_FIELD]
                        [--complete-status COMPLETE_STATUS]
                        [--priority-epics [PRIORITY_EPICS [PRIORITY_EPICS ...]]]
-                       [--past-n-sprints [PAST_N_SPRINTS [PAST_N_SPRINTS ...]]]
+                       [--past-n-sprints PAST_N_SPRINTS]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -114,7 +114,7 @@ optional arguments:
                         JIRA Issue status to indicate an Issue is done
   --priority-epics [PRIORITY_EPICS [PRIORITY_EPICS ...]]
                         Optional list of keys of the priority epics
-  --past-n-sprints [PAST_N_SPRINTS [PAST_N_SPRINTS ...]]
+  --past-n-sprints PAST_N_SPRINTS
                         Optionally grab metrics for the past N sprints, if
                         left out then only the currently active sprint's
                         metrics will be fetched

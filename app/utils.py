@@ -89,7 +89,6 @@ def _get_report_command_line_args() -> ReportCommandLineArgs:
         "--past-n-sprints",
         dest="past_n_sprints",
         type=int,
-        nargs="*",
         help="Optionally grab metrics for the past N sprints, "
         "if left out then only the currently active sprint's metrics "
         "will be fetched",
