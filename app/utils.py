@@ -47,7 +47,7 @@ def _get_report_command_line_args() -> ReportCommandLineArgs:
         type=float,
         nargs="*",
         help="The team's planned capacities for previous sprints. "
-        "In order of oldest to most current sprint's planned capacities.",
+        "In order of most current to the oldest sprint's planned capacities.",
         required=False,
         default=[],
     )

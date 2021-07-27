@@ -35,7 +35,8 @@ class ReportManager:
         for sprint_name in sprint_names:
             self._remove_existing_current_sprint_entry(sprint_name)
 
-        for sprint_metric in sprint_metrics:
+        ordered_sprint_metrics = self._chronologically_order_metrics(sprint_metrics)
+        for sprint_metric in ordered_sprint_metrics:
             four_sprint_average = self._get_four_sprint_completed_average(
                 sprint_metric.completed
             )
@@ -80,6 +81,14 @@ class ReportManager:
         if len(self.df) == 0:
             return None
         self.df = self.df[self.df.Sprint != sprint_name]
+
+    def _chronologically_order_metrics(
+        self, metrics: List[SprintMetrics]
+    ) -> List[SprintMetrics]:
+        ordered_metrics = sorted(
+            metrics, key=lambda metric: metric.start_date, reverse=False
+        )
+        return ordered_metrics
 
     def _format_float_as_percent(self, value: float) -> str:
         formatted_float = "{0:.2%}".format(value)
