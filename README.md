@@ -55,7 +55,7 @@ optional arguments:
                         other args not required.
   --planned-capacities [PLANNED_CAPACITIES [PLANNED_CAPACITIES ...]]
                         The team's planned capacities for previous sprints. In
-                        order of oldest to most current sprint's planned
+                        order of most current to the oldest sprint's planned
                         capacities.
   --board-id BOARD_ID   JIRA Board ID
   --project-name PROJECT_NAME
@@ -67,9 +67,9 @@ optional arguments:
   --priority-epics [PRIORITY_EPICS [PRIORITY_EPICS ...]]
                         Optional list of keys of the priority epics
   --past-n-sprints [PAST_N_SPRINTS [PAST_N_SPRINTS ...]]
-                        Optionally grab metrics for the past N sprints, if left
-                        out then only the currently active sprint's metrics
-                        will be fetched
+                        Optionally grab metrics for the past N sprints, if
+                        left out then only the currently active sprint's
+                        metrics will be fetched
 ```
 
 A config file can be supplied in the form of the `--config-file` arg to the
@@ -103,7 +103,7 @@ optional arguments:
                         other args not required.
   --planned-capacities [PLANNED_CAPACITIES [PLANNED_CAPACITIES ...]]
                         The team's planned capacities for previous sprints. In
-                        order of oldest to most current sprint's planned
+                        order of most current to the oldest sprint's planned
                         capacities.
   --board-id BOARD_ID   JIRA Board ID
   --project-name PROJECT_NAME
@@ -115,9 +115,9 @@ optional arguments:
   --priority-epics [PRIORITY_EPICS [PRIORITY_EPICS ...]]
                         Optional list of keys of the priority epics
   --past-n-sprints [PAST_N_SPRINTS [PAST_N_SPRINTS ...]]
-                        Optionally grab metrics for the past N sprints,if left
-                        out then only the currently active sprint's metrics
-                        will be fetched
+                        Optionally grab metrics for the past N sprints, if
+                        left out then only the currently active sprint's
+                        metrics will be fetched
 ```
 
 To generate data visualizations based upon the report created by the scraper then

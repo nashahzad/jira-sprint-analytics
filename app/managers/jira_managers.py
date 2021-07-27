@@ -54,7 +54,7 @@ class JIRAManager:
             )
 
             sprint_metrics = SprintMetrics(
-                planned_capacity=self.config.planned_capacities[index],
+                planned_capacity=planned_capacity,
                 commitment=commitment,
                 completed=completed,
                 scope_change=scope_change,
@@ -177,7 +177,7 @@ class JIRAManager:
                 expand="changelog",
             )
             sprint_issue = SprintIssues(sprint_id=sprint.id, issues=issues)
-            sprint_issues.insert(0, sprint_issue)
+            sprint_issues.append(sprint_issue)
         return sprint_issues
 
     def _get_issue_story_points(self, issue: Issue) -> Optional[int]:

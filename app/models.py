@@ -100,4 +100,6 @@ class SprintMetrics(BaseModel):
 
     @property
     def capacity_achieved(self) -> float:
+        if self.planned_capacity == 0:
+            return 0
         return self.completed / self.planned_capacity
