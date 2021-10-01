@@ -68,6 +68,12 @@ class ReportManager:
                 "Bug Tickets": sprint_metric.unpointed_breakdown.unpointed_bugs,
                 "Priority Points": sprint_metric.priority_breakdown.priority_points,
                 "Non-Priority Points": sprint_metric.priority_breakdown.non_priority_points,
+                "Priority Percentage": self._get_priority_point_percentage(
+                    sprint_metric
+                ),
+                "Non Priority Percentage": self._get_non_priority_point_percentage(
+                    sprint_metric
+                ),
             }
 
             self.df = self.df.append(row, ignore_index=True)
@@ -125,3 +131,17 @@ class ReportManager:
 
         average = (self.df.Completed.iloc[-3:].sum() + completed) / 4
         return average
+
+    def _get_priority_point_percentage(self, sprint_metric: SprintMetrics) -> str:
+        fraction = sprint_metric.priority_breakdown.priority_points / (
+            sprint_metric.commitment + sprint_metric.scope_change
+        )
+        percentage = self._format_float_as_percent(fraction)
+        return percentage
+
+    def _get_non_priority_point_percentage(self, sprint_metric: SprintMetrics) -> str:
+        fraction = sprint_metric.priority_breakdown.non_priority_points / (
+            sprint_metric.commitment + sprint_metric.scope_change
+        )
+        percentage = self._format_float_as_percent(fraction)
+        return percentage
