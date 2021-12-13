@@ -37,19 +37,24 @@ class ReportManager:
 
         ordered_sprint_metrics = self._chronologically_order_metrics(sprint_metrics)
         for sprint_metric in ordered_sprint_metrics:
-            four_sprint_average = self._get_four_sprint_completed_average(
-                sprint_metric.completed
-            )
-            four_sprint_capacity_achieved_avg = (
-                self._get_four_sprint_capacity_achieved_average(
-                    sprint_metric.capacity_achieved
+            if len(self.df) < 3:
+                four_sprint_average = None
+                four_sprint_capacity_achieved_avg = None
+                four_sprint_smoothed_capacity_avg = None
+            else:
+                four_sprint_average = self._get_four_sprint_completed_average(
+                    sprint_metric.completed
                 )
-            )
-            four_sprint_smoothed_capacity_avg = (
-                self._get_four_sprint_smoothed_capacity_achieved_average(
-                    sprint_metric.completed, sprint_metric.planned_capacity
+                four_sprint_capacity_achieved_avg = (
+                    self._get_four_sprint_capacity_achieved_average(
+                        sprint_metric.capacity_achieved
+                    )
                 )
-            )
+                four_sprint_smoothed_capacity_avg = (
+                    self._get_four_sprint_smoothed_capacity_achieved_average(
+                        sprint_metric.completed, sprint_metric.planned_capacity
+                    )
+                )
             row = {
                 "Sprint": sprint_metric.sprint_name,
                 "Commitment": sprint_metric.commitment,
@@ -102,10 +107,7 @@ class ReportManager:
 
     def _get_four_sprint_smoothed_capacity_achieved_average(
         self, completed: int, planned_capacity: float
-    ) -> Optional[str]:
-        if len(self.df) < 4:
-            return None
-
+    ) -> str:
         completed_sum = self.df.Completed.iloc[-3:].sum() + completed
         planned_capacity_sum = (
             self.df["Planned Capacity"].iloc[-3:].sum() + planned_capacity
@@ -116,19 +118,13 @@ class ReportManager:
 
     def _get_four_sprint_capacity_achieved_average(
         self, capacity_achieved: float
-    ) -> Optional[str]:
-        if len(self.df) < 4:
-            return None
-
+    ) -> str:
         values = [float(ca[:-1]) for ca in self.df["Capacity Achieved"].iloc[-3:]]
         average = (sum(values) + capacity_achieved * 100) / 4 / 100
         formatted_average = self._format_float_as_percent(average)
         return formatted_average
 
-    def _get_four_sprint_completed_average(self, completed: int) -> Optional[str]:
-        if len(self.df) < 4:
-            return None
-
+    def _get_four_sprint_completed_average(self, completed: int) -> str:
         average = (self.df.Completed.iloc[-3:].sum() + completed) / 4
         return average
 
